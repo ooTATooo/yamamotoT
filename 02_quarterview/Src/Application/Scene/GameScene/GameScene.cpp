@@ -2,6 +2,7 @@
 #include"../SceneManager.h"
 
 #include "../../Object/BackGround/BackGround.h"
+#include "../../Object/Ground/Ground.h"
 
 void GameScene::Event()
 {
@@ -32,4 +33,8 @@ void GameScene::Init()
 	std::shared_ptr<BackGround> back = std::make_shared<BackGround>();
 	back->Init();
 	AddObject(back);
+
+	std::shared_ptr<Ground> ground = std::make_shared<Ground>();
+	ground->Init();
+	AddObject(ground);
 }
