@@ -2,8 +2,6 @@
 
 void Player::Update()
 {
-	m_poly->SetUVRect(12);
-
 	m_dir = Math::Vector3::Zero;
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000) { m_dir += { 0, 0, 1 }; }
@@ -12,7 +10,41 @@ void Player::Update()
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) { m_dir += { 1, 0, 0 }; }
 
 	m_dir.Normalize();
+
 	m_pos += m_dir * m_spped;
+
+	// 重力をキャラに反映
+	m_pos.y -= m_gravity;
+	m_gravity += 0.005f;
+
+	m_poly->SetUVRect(12);
+
+
+	//======================================
+	// 当たり判定		レイ判定	ここから
+	//======================================
+
+	// レイ判定用に必要パラメータを設定する構造体を宣言
+	KdCollider::RayInfo rayinfo;
+
+	// レイの発射位置(座標)を設定
+	rayinfo.m_pos = m_pos;
+
+	// 少し高いところから飛ばす
+	rayinfo.m_pos.y += 0.1f;
+
+	// レイの方向を設定
+	rayinfo.m_dir = { 0.0f,-1.0f,0.0f };
+
+	// レイの長さを確定
+	rayinfo.m_range = m_gravity;
+
+	// 当たり判定をしたいタイプを設定
+	rayinfo.m_type = KdCollider::TypeGround;
+
+	//======================================
+	// 当たり判定		レイ判定	ここまで
+	//======================================
 }
 
 void Player::PostUpdate()
@@ -30,6 +62,7 @@ void Player::Init()
 	m_poly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
 	m_pos = m_mWorld.Translation();
 	m_spped = 0.1f;
+	m_gravity = 0.0f;
 	m_mWorld = Math::Matrix::Identity;
 }
 

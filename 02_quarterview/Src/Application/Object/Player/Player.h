@@ -22,4 +22,6 @@ private:
 	Math::Vector3 m_dir;
 
 	float m_spped;
+
+	float m_gravity;
 };

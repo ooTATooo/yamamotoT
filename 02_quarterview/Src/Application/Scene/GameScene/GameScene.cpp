@@ -7,13 +7,23 @@
 
 void GameScene::Event()
 {
+	// プレイヤーの座標を取得する
+	Math::Vector3 playerPos = {};
+
+	// weak_ptrで所持している m_player が有効か調べる
+	// expired()	期限切れならtrueを返す
+	if (!m_player.expired())
+	{
+		playerPos = m_player.lock()->GetPos();
+	}
+
 	// カメラの回転行列を作成
 	Math::Matrix rotMat;
 	rotMat = Math::Matrix::CreateRotationX(DirectX::XMConvertToRadians(30));
 
 	// カメラの座標行列を作成
 	Math::Matrix transMat;
-	transMat = Math::Matrix::CreateTranslation(0, 3, -3);
+	transMat = Math::Matrix::CreateTranslation(Math::Vector3{ 0, 3, -3 } + playerPos);
 
 	// 行列合成
 	Math::Matrix mat;
@@ -42,4 +52,7 @@ void GameScene::Init()
 	std::shared_ptr<Player> player = std::make_shared <Player>();
 	player->Init();
 	AddObject(player);
+
+	// プレイヤーの情報を保持しておく
+	m_player = player;
 }
