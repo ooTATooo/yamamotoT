@@ -5,11 +5,38 @@
 void Player::Update()
 {
 	m_dir = Math::Vector3::Zero;
+	UINT oldDirType = m_dirType;	// 前回の方向を退避
+	m_dirType = 0;		// ビット列クリア
 
-	if (GetAsyncKeyState(VK_UP) & 0x8000) { m_dir += { 0, 0, 1 }; }
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000) { m_dir += { 0, 0, -1 }; }
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000) { m_dir += { -1, 0, 0 }; }
-	if (GetAsyncKeyState(VK_RIGHT) & 0x8000) { m_dir += { 1, 0, 0 }; }
+	if (GetAsyncKeyState(VK_UP) & 0x8000)
+	{
+		m_dir += { 0, 0, 1 };
+		m_dirType |= DirType::Up;
+	}
+	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+	{
+		m_dir += { 0, 0, -1 };
+		m_dirType |= DirType::Down;
+
+	}
+	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+	{
+		m_dir += { -1, 0, 0 };
+		m_dirType |= DirType::Left;
+	}
+	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+	{
+		m_dir += { 1, 0, 0 };
+		m_dirType |= DirType::Right;
+	}
+
+
+	// 向きが変わっていればアニメーション情報変更
+	if (m_dirType != 0 && m_dirType != oldDirType)
+	{
+		ChangeAnimation();
+	}
+	// 変わってなければ元の向き(退避データ)に戻す
 
 	m_dir.Normalize();
 
@@ -21,7 +48,18 @@ void Player::Update()
 	m_pos.y -= m_gravity;
 	m_gravity += 0.005f;
 
-	m_poly->SetUVRect(12);
+	// アニメーション更新
+	m_animeInfo.count += m_animeInfo.speed;
+	int animeCnt = m_animeInfo.start + m_animeInfo.count;
+
+	// 最後のコマまで表示し終えたらループさせる
+	if (animeCnt > m_animeInfo.end)
+	{
+		animeCnt = m_animeInfo.start;
+		m_animeInfo.count = 0;
+	}
+
+	m_poly->SetUVRect(animeCnt);
 
 
 	//======================================
@@ -129,4 +167,52 @@ void Player::GenerateDepthMapFromLight()
 void Player::DrawLit()
 {
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_poly, m_mWorld);
+}
+
+void Player::ChangeAnimation()
+{
+	if (m_dirType & DirType::Up)
+	{
+		m_animeInfo.start = 24;
+		m_animeInfo.end = 27;
+	}
+	if (m_dirType & DirType::Down)
+	{
+		m_animeInfo.start = 4;
+		m_animeInfo.end = 7;
+	}
+	if (m_dirType & DirType::Left)
+	{
+		m_animeInfo.start = 12;
+		m_animeInfo.end = 15;
+	}
+	if (m_dirType & DirType::Right)
+	{
+		m_animeInfo.start = 16;
+		m_animeInfo.end = 19;
+	}
+
+	if (m_dirType == (DirType::Up | DirType::Left))
+	{
+		m_animeInfo.start = 20;
+		m_animeInfo.end = 23;
+	}
+	if (m_dirType == (DirType::Up | DirType::Right))
+	{
+		m_animeInfo.start = 28;
+		m_animeInfo.end = 31;
+	}
+	if (m_dirType == (DirType::Down | DirType::Left))
+	{
+		m_animeInfo.start = 0;
+		m_animeInfo.end = 3;
+	}
+	if (m_dirType == (DirType::Down | DirType::Right))
+	{
+		m_animeInfo.start = 8;
+		m_animeInfo.end = 11;
+	}
+
+	m_animeInfo.count = 0;
+	m_animeInfo.speed = 0.2f;
 }

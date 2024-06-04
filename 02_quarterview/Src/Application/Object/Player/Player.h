@@ -32,6 +32,8 @@ public:
 
 private:
 
+	void ChangeAnimation();
+
 	std::shared_ptr<KdSquarePolygon> m_poly;
 
 	// アニメーション情報
