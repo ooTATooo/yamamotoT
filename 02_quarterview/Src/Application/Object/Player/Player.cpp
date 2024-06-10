@@ -17,7 +17,6 @@ void Player::Update()
 	{
 		m_dir += { 0, 0, -1 };
 		m_dirType |= DirType::Down;
-
 	}
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 	{
@@ -37,10 +36,14 @@ void Player::Update()
 		ChangeAnimation();
 	}
 	// 変わってなければ元の向き(退避データ)に戻す
+	else
+	{
+		m_dirType = oldDirType;
+	}
 
 	m_dir.Normalize();
 
-	m_pos += m_dir * m_spped;
+	m_pos += m_dir * m_speed;
 
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000) { m_gravity = -0.1f; }
 
@@ -151,7 +154,7 @@ void Player::Init()
 
 	m_poly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
 	m_pos = m_mWorld.Translation();
-	m_spped = 0.1f;
+	m_speed = 0.1f;
 	m_gravity = 0.0f;
 	m_mWorld = Math::Matrix::Identity;
 

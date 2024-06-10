@@ -4,6 +4,7 @@
 #include "../../Object/BackGround/BackGround.h"
 #include "../../Object/Ground/Ground.h"
 #include "../../Object/Player/Player.h"
+#include "../../Object/Enemy/Enemy.h"
 
 void GameScene::Event()
 {
@@ -52,6 +53,16 @@ void GameScene::Init()
 	std::shared_ptr<Player> player = std::make_shared <Player>();
 	player->Init();
 	AddObject(player);
+
+	for (int i = 0; i < 20; i++)
+	{
+		std::shared_ptr<Enemy> enemy = std::make_shared<Enemy>();
+		enemy->Init();
+		enemy->SetPos({ -50.0f + (10.0f * i),0,20 });
+		enemy->SetTarget(player);
+		AddObject(enemy);
+	}
+
 
 	// プレイヤーの情報を保持しておく
 	m_player = player;
