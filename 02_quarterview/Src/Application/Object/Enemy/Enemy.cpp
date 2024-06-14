@@ -143,6 +143,9 @@ void Enemy::Init()
 	m_chaseFlg = false;
 	// デバッグワイヤー生成
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();
+
+	m_pCollider = std::make_unique<KdCollider>();
+	m_pCollider->RegisterCollisionShape("Enemy", m_poly, KdCollider::TypeDamage);
 }
 
 void Enemy::GenerateDepthMapFromLight()
@@ -153,6 +156,11 @@ void Enemy::GenerateDepthMapFromLight()
 void Enemy::DrawLit()
 {
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_poly, m_mWorld);
+}
+
+void Enemy::OnHit()
+{
+	m_isExpired = true;
 }
 
 void Enemy::SetTarget(const std::weak_ptr<KdGameObject> _target)

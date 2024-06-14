@@ -13,6 +13,8 @@ public:
 	void GenerateDepthMapFromLight()override;
 	void DrawLit()override;
 
+	void OnHit()override;
+
 	void SetPos(Math::Vector3 _pos) { m_pos = _pos; }
 	void SetTarget(const std::weak_ptr<KdGameObject> _target);
 

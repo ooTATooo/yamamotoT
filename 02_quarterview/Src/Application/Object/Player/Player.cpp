@@ -1,6 +1,7 @@
 ﻿#include "Player.h"
 
 #include "../../Scene/SceneManager.h"
+#include "../Attack/Attack.h"
 
 void Player::Update()
 {
@@ -29,11 +30,37 @@ void Player::Update()
 		m_dirType |= DirType::Right;
 	}
 
+	if (GetAsyncKeyState('Z') & 0x8000)
+	{
+		if (!m_keyFlg)
+		{
+			m_keyFlg = true;
+
+			Math::Vector3 _attackPos;
+			//m_attackDir = { 1,0,0 };
+			_attackPos = m_pos;
+			_attackPos += m_attackDir * 0.4f;
+
+			std::shared_ptr<Attack> attack = std::make_shared<Attack>();
+			attack->SetPos(_attackPos);
+			SceneManager::Instance().AddObject(attack);
+
+			// 攻撃SE
+			KdAudioManager::Instance().Play("Asset/Sounds/Attack.WAV", false);
+		}
+	}
+	else
+	{
+		m_keyFlg = false;
+	}
 
 	// 向きが変わっていればアニメーション情報変更
 	if (m_dirType != 0 && m_dirType != oldDirType)
 	{
 		ChangeAnimation();
+
+		m_attackDir = m_dir;
+		m_attackDir.Normalize();
 	}
 	// 変わってなければ元の向き(退避データ)に戻す
 	else
@@ -63,7 +90,6 @@ void Player::Update()
 	}
 
 	m_poly->SetUVRect(animeCnt);
-
 
 	//======================================
 	// 当たり判定		レイ判定	ここから
@@ -157,6 +183,8 @@ void Player::Init()
 	m_speed = 0.1f;
 	m_gravity = 0.0f;
 	m_mWorld = Math::Matrix::Identity;
+
+	m_keyFlg = false;
 
 	// デバッグワイヤー生成
 	m_pDebugWire = std::make_unique<KdDebugWireFrame>();

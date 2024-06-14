@@ -49,4 +49,8 @@ private:
 	float m_speed;
 
 	float m_gravity;
+
+	Math::Vector3 m_attackDir;
+
+	bool m_keyFlg;
 };
