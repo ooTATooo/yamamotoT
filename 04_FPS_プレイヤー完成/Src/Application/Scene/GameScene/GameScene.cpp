@@ -26,6 +26,5 @@ void GameScene::Init()
 	AddObject(_camera);
 
 	// 各オブジェクトに必要なデータを渡しておく
-	//_player->SetCamera(_camera);
 	_camera->SetTarget(_player);
 }

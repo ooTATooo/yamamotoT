@@ -25,19 +25,21 @@ void Player::Update()
 	// 座標 += 向き情報(1.0f) * 移動速度
 	m_pos += m_moveDir * m_moveSpeed;
 
-	// ワールド行列確定
-	Math::Matrix _transMat = Math::Matrix::CreateTranslation(m_pos);
+	//
+	//m_pos.y -= m_gravty;
+	//m_gravty += m_gravtyPow;
 
-	Math::Matrix _rotMat = GetRotationYMatrix();
+	// ワールド行列確定
+	Math::Matrix _rotMat = GetRotationMatrix();
+
+	Math::Matrix _transMat = Math::Matrix::CreateTranslation(m_pos);
 
 	m_mWorld = _rotMat * _transMat;
 }
 
 void Player::Init()
 {
-	// ↓画面中央座標
-	m_FixMousePos.x = 640;
-	m_FixMousePos.y = 360;
+	m_pos.y = m_adjustHeight;
 
 	SetCursorPos(m_FixMousePos.x, m_FixMousePos.y);
 

@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class Player;
-
 class CameraBase : public KdGameObject
 {
 public:
@@ -12,7 +10,7 @@ public:
 	void Update()override;
 	void PreDraw()override;
 
-	void SetTarget(const std::shared_ptr<Player>& target);
+	void SetTarget(const std::shared_ptr<KdGameObject>& target);
 
 	// 「絶対変更しません！見るだけ！」な書き方
 	const std::shared_ptr<KdCamera>& GetCamera() const
@@ -26,13 +24,8 @@ public:
 		return m_spCamera;
 	}
 
-private:
-
 protected:
 
 	std::shared_ptr<KdCamera>	m_spCamera = nullptr;
-	std::weak_ptr<Player>	m_wpTarget;
-
-	Math::Matrix m_mLocalPos = Math::Matrix::Identity;
-	Math::Matrix m_mRotation = Math::Matrix::Identity;
+	std::weak_ptr<KdGameObject>	m_wpTarget;
 };

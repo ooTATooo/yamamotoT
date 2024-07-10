@@ -11,16 +11,6 @@ public:
 
 	void Update()override;
 
-	void SetCamera(const std::shared_ptr<CameraBase>& camera) { m_wpCamera = camera; }
-
-	const Math::Matrix GetRotationMatrix()const
-	{
-		return Math::Matrix::CreateFromYawPitchRoll(
-			DirectX::XMConvertToRadians(m_degAng.y),
-			DirectX::XMConvertToRadians(m_degAng.x),
-			DirectX::XMConvertToRadians(m_degAng.z));
-	}
-
 private:
 
 	void Init()override;
@@ -32,8 +22,13 @@ private:
 		return Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_degAng.y));
 	}
 
-	// カメラ情報
-	std::weak_ptr<CameraBase> m_wpCamera;
+	const Math::Matrix GetRotationMatrix()const
+	{
+		return Math::Matrix::CreateFromYawPitchRoll(
+			DirectX::XMConvertToRadians(m_degAng.y),
+			DirectX::XMConvertToRadians(m_degAng.x),
+			DirectX::XMConvertToRadians(m_degAng.z));
+	}
 
 	// ワールド座標
 	Math::Vector3 m_pos = Math::Vector3::Zero;
@@ -45,8 +40,11 @@ private:
 	Math::Vector3 m_moveDir = Math::Vector3::Zero;
 
 	// 移動速度(ベクトルの大きさ)
-	const float m_moveSpeed = 0.1f;
+	const float m_moveSpeed = 0.6f;
+
+	// プレイヤー
+	const float m_adjustHeight = 10.0f;
 
 	// 回転用マウス座標の差分
-	POINT m_FixMousePos{};
+	POINT m_FixMousePos{ 640,360 };
 };

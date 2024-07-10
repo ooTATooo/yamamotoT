@@ -22,7 +22,7 @@ void CameraBase::PreDraw()
 	m_spCamera->SetToShader();
 }
 
-void CameraBase::SetTarget(const std::shared_ptr<Player>& target)
+void CameraBase::SetTarget(const std::shared_ptr<KdGameObject>& target)
 {
 	if (!target) { return; }
 
