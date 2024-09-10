@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-class CameraBase;
-
 class Player :public KdGameObject
 {
 public:

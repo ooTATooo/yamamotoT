@@ -91,6 +91,18 @@
     <Filter Include="Src\Application\GameObject\Characters\Player">
       <UniqueIdentifier>{76f9f89b-60cf-4a99-8fe0-fb969640ac9e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon">
+      <UniqueIdentifier>{f5515a47-5edf-4108-85d7-0e24acbc6963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\Weapon\Pistol">
+      <UniqueIdentifier>{fc64240e-f70a-45d3-b0d0-f03c1b3d52c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI">
+      <UniqueIdentifier>{ae88e9e1-124b-48df-ad2d-a6970351fc4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Application\GameObject\UI\Reticle">
+      <UniqueIdentifier>{27c13376-49f0-48f6-a98e-b0e9848203cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Pch.h">
@@ -270,6 +282,15 @@
     <ClInclude Include="Src\Application\GameObject\Characters\Player\Player.h">
       <Filter>Src\Application\GameObject\Characters\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\WeaponBase.h">
+      <Filter>Src\Application\GameObject\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\Weapon\Pistol\Pistol.h">
+      <Filter>Src\Application\GameObject\Weapon\Pistol</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Application\GameObject\UI\Reticle\Reticle.h">
+      <Filter>Src\Application\GameObject\UI\Reticle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Pch.cpp">
@@ -421,6 +442,15 @@
     </ClCompile>
     <ClCompile Include="Src\Application\GameObject\Characters\Player\Player.cpp">
       <Filter>Src\Application\GameObject\Characters\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\WeaponBase.cpp">
+      <Filter>Src\Application\GameObject\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\Weapon\Pistol\Pistol.cpp">
+      <Filter>Src\Application\GameObject\Weapon\Pistol</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Application\GameObject\UI\Reticle\Reticle.cpp">
+      <Filter>Src\Application\GameObject\UI\Reticle</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
