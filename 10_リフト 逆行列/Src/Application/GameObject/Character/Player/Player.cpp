@@ -1,7 +1,10 @@
 ﻿#include "Player.h"
-#include "Application/GameObject/Camera/CameraBase.h"
+#include "../../../GameObject/Camera/CameraBase.h"
 #include"../../../Scene/SceneManager.h"
 #include"../../../GameObject/Weapon/WeaponBase.h"
+#include "../../Terrains/Lift/Lift.h"
+
+#include "../../../main.h"
 
 void Player::Init()
 {
@@ -18,18 +21,28 @@ void Player::Init()
 
 void Player::Update()
 {
+	// 乗り物に乗っていたら
+	// 自分のワールド行列を復元 = 乗り物から見たローカル行列 * 乗り物のワールド行列
+	// 乗り物の更新(移動)処理が先に行われていないかとファイナルソードする
+	std::shared_ptr<KdGameObject> ride = m_wpRideObject.lock();
+	if (ride)
+	{
+		m_mWorld = m_localMatFromRideObject * ride->GetMatrix();
+		m_pos = GetPos();
+	}
+
 	m_moveDir = Math::Vector3::Zero;
 
-	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir.x +=  1.0f; }
+	if (GetAsyncKeyState('D') & 0x8000) { m_moveDir.x += 1.0f; }
 	if (GetAsyncKeyState('A') & 0x8000) { m_moveDir.x += -1.0f; }
-	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir.z +=  1.0f; }
+	if (GetAsyncKeyState('W') & 0x8000) { m_moveDir.z += 1.0f; }
 	if (GetAsyncKeyState('S') & 0x8000) { m_moveDir.z += -1.0f; }
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
 		if (!m_key)
 		{
 			m_key = true;
-			
+
 			m_gravity = -m_jumoPow;
 		}
 	}
@@ -72,20 +85,42 @@ void Player::Update()
 	{
 		m_rightKeyFlg = false;
 	}
-	
 
-	// カメラの回転
-	UpdateRotateByMouse();
+	if (GetAsyncKeyState('C') & 0x8000)
+	{
+		if (!keyFlg)
+		{
+			if (camFlg)
+			{
+				camFlg = false;
+			}
+			else
+			{
+				camFlg = true;
+			}
+			keyFlg = true;
+		}
+	}
+	else
+	{
+		keyFlg = false;
+	}
+
+	if (camFlg)
+	{
+		// カメラの回転
+		UpdateRotateByMouse();
+	}
 
 	//ベクトルの向きをY軸の回転行列で変換
 	//m_moveDir = m_moveDir.TransformNormal(m_moveDir, GetRotationMatrix());
 	m_moveDir = m_moveDir.TransformNormal(m_moveDir, GetRotationYMatrix());
-	
+
 	//確定した向き情報を正規化
 	m_moveDir.Normalize();
 
 	//座標更新
-	m_pos += m_moveDir*m_moveSpeed;
+	m_pos += m_moveDir * m_moveSpeed;
 
 	//重力をキャラに反映
 	m_pos.y -= m_gravity;
@@ -101,13 +136,16 @@ void Player::Update()
 
 void Player::PostUpdate()
 {
+	// 乗っているオブジェクトのweak_ptrをリセット
+	m_wpRideObject.reset();
+
 	//レイ判定
 	KdCollider::RayInfo ray;
 	//飛ばす位置
 	ray.m_pos = m_pos + Math::Vector3{ 0,-m_adjusHeight,0 };
 	//長さ
 	static const float enableStepHeight = 0.5f;
-	ray.m_range = m_gravity+ enableStepHeight;
+	ray.m_range = m_gravity + enableStepHeight;
 	//方向
 	ray.m_dir = Math::Vector3::Down;
 	//タイプ
@@ -116,7 +154,14 @@ void Player::PostUpdate()
 	std::list<KdCollider::CollisionResult>retRayList;
 	for (auto& obj : SceneManager::Instance().GetObjList())
 	{
-		obj->Intersects(ray, &retRayList);
+		if (obj->Intersects(ray, &retRayList))
+		{
+			// 上に乗れるオブジェクトだったら記録しておく
+			if (obj->IsRideable() == true)
+			{
+				m_wpRideObject = obj;
+			}
+		}
 	}
 
 	bool hit = false;
@@ -135,8 +180,27 @@ void Player::PostUpdate()
 
 	if (hit)
 	{
-		m_pos = hitPos + Math::Vector3{0,m_adjusHeight,0};
+		m_pos = hitPos + Math::Vector3{ 0,m_adjusHeight,0 };
+
+		SetPos(m_pos);
+
 		m_gravity = 0;
+
+		// プレイヤーが何かに乗っていれば
+		// 乗り物から見たプレイヤーのローカル行列を保存
+
+		// ex : 逆行列の取得方法	プレイヤーの場合
+		// Math::Matrix _inverMat = GetMatrix().Invert();
+	
+		std::shared_ptr<KdGameObject> ride = m_wpRideObject.lock();
+		if (ride)
+		{
+			// 乗り物の逆行列を取得
+			Math::Matrix inverMat = ride->GetMatrix().Invert();
+
+			// 逆行列を合成する事で原点からのローカル行列を作成して保存
+			m_localMatFromRideObject = m_mWorld * inverMat;
+		}
 	}
 }
 

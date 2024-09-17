@@ -20,7 +20,7 @@ void GameScene::Event()
 void GameScene::Init()
 {
 	//カーソルを非表示
-	ShowCursor(false);
+	//ShowCursor(false);
 
 	//地形 地面
 	std::shared_ptr<Terrain> _terrain = std::make_shared<Terrain>();
@@ -33,6 +33,10 @@ void GameScene::Init()
 		_wood->SetPos({ -60.0f + i * 30,0,50.0f });
 		m_objList.push_back(_wood);
 	}
+
+	std::shared_ptr<Lift> _lift = std::make_shared<Lift>();
+	_lift->Init();
+	AddObject(_lift);
 
 	//プレイヤー
 	std::shared_ptr<Player> _player = std::make_shared<Player>();
@@ -56,10 +60,6 @@ void GameScene::Init()
 		AddObject(_cloud);
 	}
 
-	std::shared_ptr<Lift> _lift = std::make_shared<Lift>();
-	_lift->Init();
-	AddObject(_lift);
-
 	// カメラ初期化
 	std::shared_ptr<FPSCamera> _camera = std::make_shared< FPSCamera>();
 	_camera->Init();
@@ -69,6 +69,7 @@ void GameScene::Init()
 	_camera->SetTarget(_player);
 	_pistol->SetParent(_player);
 	_player->SetWeapon(_pistol);
+	//_player->SetRide(_lift);
 	//_player->SetCamera(_camera);
 
 }

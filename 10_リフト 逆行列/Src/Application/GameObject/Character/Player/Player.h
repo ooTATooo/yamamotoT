@@ -1,5 +1,6 @@
 ﻿class CameraBase;
 class WeaponBase;
+class Lift;
 
 class Player:public KdGameObject
 {
@@ -19,6 +20,11 @@ public:
 	void SetWeapon(const std::shared_ptr<WeaponBase>& _weapon)
 	{
 		m_wpWeapon = _weapon;
+	}
+
+	void SetRide(const std::shared_ptr<KdGameObject>& _ride)
+	{
+		m_wpRideObject = _ride;
 	}
 
 	const Math::Matrix GetRotationMatrix()const
@@ -68,10 +74,17 @@ private:
 	const float m_gravityPow = 0.04f;
 	float m_gravity = 0.0f;
 
+	// 乗り物制御関係
+	std::weak_ptr<KdGameObject> m_wpRideObject;	// 乗っているオブジェクト
+	Math::Matrix m_localMatFromRideObject;		// 乗っているオブジェクトからのローカル行列
+
 	// カメラ回転用角度
 	Math::Vector3				m_DegAng = Math::Vector3::Zero;
 	
 	// カメラ回転用マウス座標の原点
 	POINT						m_FixMousePos{};
 
+
+	bool keyFlg = false;
+	bool camFlg = true;
 };
